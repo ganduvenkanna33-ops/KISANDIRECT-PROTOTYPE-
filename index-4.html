@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Kisan Direct</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  /* Offline-safe fallback for the small set of Tailwind utility classes this
+     app relies on. If the Tailwind CDN script above can't load (no internet
+     at demo venue, blocked network, etc.) these keep the layout correct
+     instead of collapsing to unstyled blocks. Harmless no-ops once the real
+     Tailwind CDN loads (same rules, just redeclared). */
+  .flex{display:flex;} .flex-1{flex:1 1 0%;} .flex-col{flex-direction:column;}
+  .flex-wrap{flex-wrap:wrap;} .items-center{align-items:center;} .justify-between{justify-content:space-between;}
+  .grid{display:grid;} .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr));} .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .gap-2{gap:8px;} .gap-3{gap:12px;}
+  .font-bold{font-weight:700;} .font-extrabold{font-weight:800;} .font-semibold{font-weight:600;}
+  .mb-1{margin-bottom:4px;} .mb-2{margin-bottom:8px;} .mb-3{margin-bottom:12px;} .mb-4{margin-bottom:16px;} .mb-5{margin-bottom:20px;}
+  .mt-1{margin-top:4px;} .mt-1\.5{margin-top:6px;} .mt-2{margin-top:8px;} .mt-3{margin-top:12px;} .mt-4{margin-top:16px;} .mt-5{margin-top:20px;}
+  .mr-1{margin-right:4px;} .pt-4{padding-top:16px;}
+  .p-2{padding:8px;} .p-2\.5{padding:10px;} .p-3{padding:12px;} .p-4{padding:16px;} .p-5{padding:20px;} .p-6{padding:24px;}
+  .px-4{padding-left:16px;padding-right:16px;} .px-5{padding-left:20px;padding-right:20px;}
+  .py-3{padding-top:12px;padding-bottom:12px;} .py-4{padding-top:16px;padding-bottom:16px;} .py-5{padding-top:20px;padding-bottom:20px;}
+  .py-6{padding-top:24px;padding-bottom:24px;} .py-8{padding-top:32px;padding-bottom:32px;}
+  .rounded-lg{border-radius:8px;} .text-center{text-align:center;} .text-left{text-align:left;}
+  .text-base{font-size:16px;} .text-lg{font-size:18px;} .text-sm{font-size:14px;} .text-xl{font-size:20px;}
+  .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} .w-full{width:100%;} .min-w-0{min-width:0;}
+</style>
+<style>
+  :root{
+    --soil:#2A2013;
+    --leaf:#2F6B3C;
+    --leaf-dark:#204A29;
+    --leaf-light:#E8F3EA;
+    --turmeric:#E3A008;
+    --turmeric-light:#FBEFCF;
+    --wheat:#FBF7EC;
+    --wheat-deep:#F3EBD8;
+    --clay:#B5502D;
+    --clay-light:#F6E3DA;
+    --ink:#2A2420;
+    --muted:#7A6F60;
+    --line:#E4DAC4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --wheat:#1C1712; --wheat-deep:#241D15; --ink:#F3EEE2; --muted:#B4A98F; --line:#3A3122;
+      --leaf-light:#1E2E22;
+    }
+  }
+  :root[data-theme="dark"]{
+    --wheat:#1C1712; --wheat-deep:#241D15; --ink:#F3EEE2; --muted:#B4A98F; --line:#3A3122;
+    --leaf-light:#1E2E22;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--wheat); color:var(--ink);
+    font-family:'Inter',sans-serif;
+    margin:0; min-height:100vh; -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Baloo 2',sans-serif;}
+  .telugu{font-family:'Noto Sans Telugu','Inter',sans-serif;}
+  .app-shell{max-width:480px;margin:0 auto;min-height:100vh;background:var(--wheat);position:relative;padding-bottom:84px;}
+  .topbar{position:sticky;top:0;z-index:30;background:var(--wheat);border-bottom:1px solid var(--line);}
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+
+  .btn-primary{background:var(--leaf);color:#fff;font-weight:600;border-radius:12px;padding:14px 18px;border:none;font-size:15px;transition:transform .08s ease, background .15s ease;}
+  .btn-primary:active{transform:scale(.97);background:var(--leaf-dark);}
+  .btn-secondary{background:transparent;color:var(--leaf);font-weight:600;border-radius:12px;padding:14px 18px;border:1.5px solid var(--leaf);font-size:15px;}
+  .btn-secondary:active{transform:scale(.97);}
+  .btn-clay{background:var(--clay);color:#fff;font-weight:600;border-radius:12px;padding:14px 18px;border:none;font-size:15px;}
+  .btn-clay:active{transform:scale(.97);}
+  .btn-ghost{background:var(--wheat-deep);color:var(--ink);font-weight:600;border-radius:12px;padding:10px 14px;border:1px solid var(--line);font-size:14px;}
+  input,select,textarea{
+    width:100%;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 13px;font-size:15px;color:var(--ink);font-family:'Inter',sans-serif;
+  }
+  :root[data-theme="dark"] input,:root[data-theme="dark"] select,:root[data-theme="dark"] textarea{background:#26201A;}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) input,:root:not([data-theme="light"]) select,:root:not([data-theme="light"]) textarea{background:#26201A;}}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--leaf);outline-offset:1px;}
+  label.field-label{font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:5px;display:block;}
+
+  .card{background:#fff;border-radius:14px;border:1px solid var(--line);overflow:hidden;}
+  :root[data-theme="dark"] .card{background:#221C15;}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .card{background:#221C15;}}
+  .card-accent{border-left:4px solid var(--leaf);}
+  .card-accent.clay{border-left-color:var(--clay);}
+  .card-accent.turmeric{border-left-color:var(--turmeric);}
+  .card-accent.muted{border-left-color:var(--line);}
+
+  .chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:100px;}
+  .chip-active{background:var(--leaf-light);color:var(--leaf-dark);}
+  .chip-sold{background:var(--wheat-deep);color:var(--muted);}
+  .chip-pending{background:var(--turmeric-light);color:#8A5A00;}
+  .chip-accepted{background:var(--leaf-light);color:var(--leaf-dark);}
+  .chip-rejected{background:var(--clay-light);color:var(--clay);}
+  .chip-completed{background:#E4E9F5;color:#3B4F8A;}
+  .chip-demo{background:var(--clay-light);color:var(--clay);}
+
+  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid var(--line);display:flex;z-index:40;padding-bottom:env(safe-area-inset-bottom);}
+  :root[data-theme="dark"] .bottom-nav{background:#221C15;}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .bottom-nav{background:#221C15;}}
+  .nav-item{flex:1;text-align:center;padding:9px 2px 8px;font-size:10.5px;font-weight:600;color:var(--muted);border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .nav-item.active{color:var(--leaf);}
+  .nav-icon{font-size:19px;line-height:1;}
+
+  .fab-mic{position:fixed;bottom:96px;left:50%;transform:translateX(calc(-50% + 178px));width:56px;height:56px;border-radius:50%;background:var(--turmeric);color:#fff;border:none;box-shadow:0 6px 18px rgba(227,160,8,.4);font-size:22px;z-index:41;}
+  .fab-mic.listening{animation:pulse 1.1s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(227,160,8,.55);}70%{box-shadow:0 0 0 16px rgba(227,160,8,0);}100%{box-shadow:0 0 0 0 rgba(227,160,8,0);}}
+
+  .toast-wrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;z-index:100;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+  .toast{background:var(--ink);color:var(--wheat);padding:12px 16px;border-radius:10px;font-size:13.5px;font-weight:500;box-shadow:0 8px 20px rgba(0,0,0,.18);}
+
+  .skip-link:focus{position:fixed;top:8px;left:8px;background:#fff;padding:8px 12px;border-radius:8px;z-index:200;}
+  a{color:inherit;}
+  .tab-btn{padding:9px 14px;border-radius:100px;font-size:13px;font-weight:600;border:1.5px solid var(--line);background:#fff;color:var(--muted);white-space:nowrap;}
+  .tab-btn.active{background:var(--leaf);color:#fff;border-color:var(--leaf);}
+  :root[data-theme="dark"] .tab-btn{background:#221C15;}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tab-btn{background:#221C15;}}
+  .scroll-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;}
+  .scroll-row::-webkit-scrollbar{display:none;}
+
+  .veg-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--leaf-light);flex-shrink:0;}
+  .stat-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;}
+  :root[data-theme="dark"] .stat-box{background:#221C15;}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .stat-box{background:#221C15;}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link" style="position:absolute;left:-9999px;">Skip to content</a>
+<div class="toast-wrap" id="toastWrap"></div>
+<div class="app-shell" id="appShell">
+  <div id="main"></div>
+</div>
+
+<script>
+/* ============================= STORAGE ============================= */
+const STORE_KEY='kisan_direct_state_v1';
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){ console.warn('storage read failed',e); }
+  return seedData();
+}
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch(e){ console.warn('storage write failed',e); }
+}
+function uid(prefix){ return prefix+'_'+Math.random().toString(36).slice(2,9); }
+
+/* ============================= SEED DEMO DATA ============================= */
+function seedData(){
+  const now=Date.now();
+  const users=[
+    {id:'u_farmer1',role:'farmer',name:'Ramesh Naidu',phone:'9876500001',email:'ramesh@example.com',password:'demo123',
+      village:'Kothapalli',district:'Warangal',state:'Telangana',languages:['Telugu','English'],farmType:'Vegetables & Grains',photo:'👨‍🌾'},
+    {id:'u_farmer2',role:'farmer',name:'Lakshmi Devi',phone:'9876500002',email:'lakshmi@example.com',password:'demo123',
+      village:'Peddapuram',district:'East Godavari',state:'Andhra Pradesh',languages:['Telugu'],farmType:'Spices',photo:'👩‍🌾'},
+    {id:'u_buyer1',role:'buyer',name:'Suresh Traders',phone:'9876500003',email:'suresh@example.com',password:'demo123',
+      village:'Market Yard',district:'Hyderabad',state:'Telangana',languages:['Telugu','English'],photo:'🧑‍💼'},
+    {id:'u_admin',role:'admin',name:'Admin',phone:'9999999999',email:'admin@kisandirect.demo',password:'admin123',
+      village:'-',district:'-',state:'-',languages:[],photo:'🛡️'}
+  ];
+  const products=[
+    {id:'p1',farmerId:'u_farmer1',name:'Tomato',category:'Vegetables',quantity:500,unit:'kg',price:18,harvestDate:daysAgo(2),
+      location:'Kothapalli, Warangal',description:'Fresh, farm-picked tomatoes. Good for wholesale.',status:'active',createdAt:daysAgo(2),icon:'🍅'},
+    {id:'p2',farmerId:'u_farmer1',name:'Rice (Sona Masoori)',category:'Grains',quantity:20,unit:'quintal',price:2200,harvestDate:daysAgo(20),
+      location:'Kothapalli, Warangal',description:'Premium quality Sona Masoori rice, dried and cleaned.',status:'active',createdAt:daysAgo(15),icon:'🌾'},
+    {id:'p3',farmerId:'u_farmer2',name:'Turmeric',category:'Spices',quantity:8,unit:'quintal',price:7800,harvestDate:daysAgo(30),
+      location:'Peddapuram, East Godavari',description:'Polished turmeric fingers, high curcumin content.',status:'active',createdAt:daysAgo(10),icon:'🟡'},
+    {id:'p4',farmerId:'u_farmer2',name:'Chilli',category:'Spices',quantity:15,unit:'quintal',price:16000,harvestDate:daysAgo(12),
+      location:'Peddapuram, East Godavari',description:'Guntur-style dried red chilli, medium-hot.',status:'active',createdAt:daysAgo(6),icon:'🌶️'},
+    {id:'p5',farmerId:'u_farmer1',name:'Cotton',category:'Cash Crops',quantity:12,unit:'quintal',price:6700,harvestDate:daysAgo(25),
+      location:'Kothapalli, Warangal',description:'Machine-picked cotton, low moisture.',status:'sold',createdAt:daysAgo(28),icon:'☁️'},
+    {id:'p6',farmerId:'u_farmer2',name:'Maize',category:'Grains',quantity:30,unit:'quintal',price:1950,harvestDate:daysAgo(8),
+      location:'Peddapuram, East Godavari',description:'Yellow maize, suitable for poultry feed and export.',status:'active',createdAt:daysAgo(4),icon:'🌽'}
+  ];
+  const enquiries=[
+    {id:'e1',buyerId:'u_buyer1',farmerId:'u_farmer1',productId:'p1',message:"I'm interested in buying 500 kg of this product.",status:'pending',createdAt:daysAgo(1)},
+    {id:'e2',buyerId:'u_buyer1',farmerId:'u_farmer2',productId:'p3',message:"I'm interested in buying 2 quintal of this product.",status:'accepted',createdAt:daysAgo(3)}
+  ];
+  const favorites=[{id:'f1',buyerId:'u_buyer1',productId:'p4'}];
+  const notifications=[
+    {id:'n1',userId:'u_farmer1',message:'Suresh Traders sent an enquiry for your Tomato listing.',read:false,createdAt:daysAgo(1)},
+    {id:'n2',userId:'u_farmer2',message:'Your Turmeric enquiry from Suresh Traders was accepted.',read:true,createdAt:daysAgo(3)}
+  ];
+  return {users,products,enquiries,favorites,notifications,currentUserId:null,seededAt:now};
+}
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); }
+
+let state = loadState();
+
+/* Demo market price data - clearly labeled, not live government data */
+const DEMO_MARKET_PRICES=[
+  {crop:'Tomato',market:'Warangal Market Yard',price:'₹18–22 / kg',date:'Today',unit:'kg'},
+  {crop:'Rice (Sona Masoori)',market:'Hyderabad Wholesale',price:'₹2,150–2,300 / quintal',date:'Today',unit:'quintal'},
+  {crop:'Turmeric',market:'Nizamabad Turmeric Market',price:'₹7,500–8,100 / quintal',date:'Yesterday',unit:'quintal'},
+  {crop:'Chilli (Guntur)',market:'Guntur Chilli Yard',price:'₹15,500–16,800 / quintal',date:'Today',unit:'quintal'},
+  {crop:'Cotton',market:'Adilabad Market Yard',price:'₹6,500–6,900 / quintal',date:'2 days ago',unit:'quintal'},
+  {crop:'Maize',market:'Khammam Market Yard',price:'₹1,900–2,050 / quintal',date:'Today',unit:'quintal'}
+];
+const CATEGORIES=['Vegetables','Grains','Spices','Cash Crops','Fruits','Pulses'];
+const STATES_DISTRICTS={
+  'Telangana':['Warangal','Hyderabad','Khammam','Nizamabad','Adilabad','Karimnagar'],
+  'Andhra Pradesh':['East Godavari','Guntur','Krishna','Chittoor','Visakhapatnam']
+};
+
+/* ============================= HELPERS ============================= */
+function currentUser(){ return state.users.find(u=>u.id===state.currentUserId) || null; }
+function farmerById(id){ return state.users.find(u=>u.id===id); }
+function productById(id){ return state.products.find(p=>p.id===id); }
+function fmtDate(iso){ const d=new Date(iso); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+function fmtWhen(iso){
+  const diff=Date.now()-new Date(iso).getTime();
+  const days=Math.floor(diff/86400000);
+  if(days<=0) return 'today';
+  if(days===1) return '1 day ago';
+  return days+' days ago';
+}
+function toast(msg){
+  const wrap=document.getElementById('toastWrap');
+  const el=document.createElement('div');
+  el.className='toast'; el.textContent=msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),300); },2200);
+}
+function addNotification(userId,message){
+  state.notifications.unshift({id:uid('n'),userId,message,read:false,createdAt:new Date().toISOString()});
+}
+function unreadCount(userId){
+  return state.notifications.filter(n=>n.userId===userId && !n.read).length;
+}
+function esc(s){ return (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ============================= ROUTER ============================= */
+window.addEventListener('hashchange', route);
+window.addEventListener('DOMContentLoaded', ()=>{ if(!location.hash) location.hash='#/home'; route(); });
+function go(hash){ location.hash=hash; }
+function route(){
+  const hash = location.hash || '#/home';
+  const [path, qs] = hash.slice(2).split('?');
+  const parts = path.split('/').filter(Boolean);
+  const params = new URLSearchParams(qs||'');
+  const user = currentUser();
+
+  // route guards
+  const protectedFarmer = parts[0]==='farmer';
+  const protectedBuyer = parts[0]==='buyer';
+  const protectedAdmin = parts[0]==='admin';
+  if((protectedFarmer && (!user||user.role!=='farmer')) ||
+     (protectedBuyer && (!user||user.role!=='buyer')) ||
+     (protectedAdmin && (!user||user.role!=='admin'))){
+    toast('Please log in to continue');
+    location.hash='#/login'; return;
+  }
+
+  let html='';
+  if(path===''||path==='home') html=renderHome();
+  else if(path==='login') html=renderLogin();
+  else if(path==='signup') html=renderSignup();
+  else if(path==='forgot') html=renderForgot();
+  else if(path==='market') html=renderMarket();
+  else if(path==='voice') html=renderVoice();
+  else if(parts[0]==='farmer') html=renderFarmerRoute(parts,params);
+  else if(parts[0]==='buyer') html=renderBuyerRoute(parts,params);
+  else if(parts[0]==='admin') html=renderAdmin();
+  else html=renderHome();
+
+  document.getElementById('main').innerHTML = html + renderNav();
+  window.scrollTo(0,0);
+}
+
+/* ============================= LAYOUT PARTS ============================= */
+function topbar(title,opts={}){
+  const back = opts.back ? `<button onclick="history.back()" class="btn-ghost" style="padding:8px 11px;" aria-label="Back">←</button>` : '';
+  const user=currentUser();
+  const bell = user ? `<button onclick="go('#/${user.role}/notifications')" class="btn-ghost" style="padding:8px 11px;position:relative;" aria-label="Notifications">🔔${unreadCount(user.id)>0?`<span style="position:absolute;top:4px;right:5px;width:7px;height:7px;background:var(--clay);border-radius:50%;"></span>`:''}</button>` : '';
+  return `<div class="topbar"><div class="flex items-center justify-between gap-2 px-4 py-3">
+    <div class="flex items-center gap-2">${back}<h1 class="display font-bold text-lg" style="color:var(--leaf-dark)">${title}</h1></div>
+    <div class="flex items-center gap-2">${bell}</div>
+  </div></div>`;
+}
+function renderNav(){
+  const user=currentUser();
+  if(!user){
+    return `<div class="bottom-nav">
+      <button class="nav-item ${loc('home')}" onclick="go('#/home')"><span class="nav-icon">🏠</span>Home</button>
+      <button class="nav-item ${loc('market')}" onclick="go('#/market')"><span class="nav-icon">📊</span>Market</button>
+      <button class="nav-item ${loc('login')}" onclick="go('#/login')"><span class="nav-icon">🔑</span>Login</button>
+    </div>`;
+  }
+  if(user.role==='farmer'){
+    return `<div class="bottom-nav">
+      <button class="nav-item ${loc('farmer/dashboard')}" onclick="go('#/farmer/dashboard')"><span class="nav-icon">🏠</span>Home</button>
+      <button class="nav-item ${loc('farmer/products')}" onclick="go('#/farmer/products')"><span class="nav-icon">🌿</span>Products</button>
+      <button class="nav-item ${loc('farmer/enquiries')}" onclick="go('#/farmer/enquiries')"><span class="nav-icon">💬</span>Enquiries</button>
+      <button class="nav-item ${loc('voice')}" onclick="go('#/voice')"><span class="nav-icon">🎙️</span>Voice</button>
+      <button class="nav-item ${loc('farmer/profile')}" onclick="go('#/farmer/profile')"><span class="nav-icon">👤</span>Profile</button>
+    </div>`;
+  }
+  if(user.role==='buyer'){
+    return `<div class="bottom-nav">
+      <button class="nav-item ${loc('buyer/dashboard')}" onclick="go('#/buyer/dashboard')"><span class="nav-icon">🏠</span>Home</button>
+      <button class="nav-item ${loc('buyer/search')}" onclick="go('#/buyer/search')"><span class="nav-icon">🔍</span>Search</button>
+      <button class="nav-item ${loc('buyer/favorites')}" onclick="go('#/buyer/favorites')"><span class="nav-icon">❤️</span>Favorites</button>
+      <button class="nav-item ${loc('buyer/enquiries')}" onclick="go('#/buyer/enquiries')"><span class="nav-icon">💬</span>Enquiries</button>
+      <button class="nav-item ${loc('buyer/profile')}" onclick="go('#/buyer/profile')"><span class="nav-icon">👤</span>Profile</button>
+    </div>`;
+  }
+  if(user.role==='admin'){
+    return `<div class="bottom-nav">
+      <button class="nav-item ${loc('admin')}" onclick="go('#/admin')"><span class="nav-icon">🛡️</span>Admin</button>
+      <button class="nav-item" onclick="logout()"><span class="nav-icon">🚪</span>Logout</button>
+    </div>`;
+  }
+  return '';
+}
+function loc(p){ return (location.hash.slice(2)||'home').startsWith(p) ? 'active' : ''; }
+
+/* ============================= HOME ============================= */
+function renderHome(){
+  const user=currentUser();
+  return `
+  <div style="background:linear-gradient(180deg,var(--leaf-light) 0%, var(--wheat) 65%);padding:20px 20px 26px;">
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-2">
+        <span style="font-size:26px;">🌱</span>
+        <span class="display font-extrabold text-xl" style="color:var(--leaf-dark)">Kisan Direct</span>
+      </div>
+      ${user? `<button onclick="go('#/${user.role}/profile')" class="btn-ghost" style="padding:6px 10px;">${user.photo} ${esc(user.name.split(' ')[0])}</button>`
+             : `<button onclick="go('#/login')" class="btn-ghost">Log in</button>`}
+    </div>
+    <h1 class="display font-extrabold" style="font-size:28px;line-height:1.15;color:var(--ink);">Sell your harvest.<br>Straight to the buyer.</h1>
+    <p class="mt-2" style="color:var(--muted);font-size:14.5px;">No middlemen. Fair prices. Talk to the app in Telugu.</p>
+    <div class="flex gap-2 mt-5">
+      <button class="btn-primary flex-1" onclick="homeStart('farmer')">Sell Your Crop</button>
+      <button class="btn-secondary flex-1" onclick="homeStart('buyer')">Buy Products</button>
+    </div>
+    <button class="mt-2 w-full btn-clay" onclick="go('#/voice')">🎙️ Talk in Telugu</button>
+  </div>
+
+  <div class="px-5 py-5">
+    <h2 class="display font-bold text-base mb-3">What you can do</h2>
+    <div class="grid grid-cols-2 gap-3">
+      ${homeFeatureCard('🍅','Find Fresh Products','Browse crops from verified farmers near you.', "go('#/buyer/search')")}
+      ${homeFeatureCard('📦','Sell Directly','List your crop in minutes, reach buyers fast.', "homeStart('farmer')")}
+      ${homeFeatureCard('🎙️','Telugu Voice Assistant','Speak in Telugu to add crops or search.', "go('#/voice')")}
+      ${homeFeatureCard('📊','Market Information','Check indicative prices before you sell.', "go('#/market')")}
+    </div>
+  </div>
+
+  <div class="px-5 py-4">
+    <h2 class="display font-bold text-base mb-3">How it works</h2>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="card p-4">
+        <div class="font-semibold text-sm mb-2" style="color:var(--leaf-dark)">🧑‍🌾 Farmer</div>
+        <ol style="font-size:13px;color:var(--muted);padding-left:18px;line-height:1.9;">
+          <li>Register</li><li>List crop</li><li>Connect with buyer</li>
+        </ol>
+      </div>
+      <div class="card p-4">
+        <div class="font-semibold text-sm mb-2" style="color:var(--clay)">🧑‍💼 Buyer</div>
+        <ol style="font-size:13px;color:var(--muted);padding-left:18px;line-height:1.9;">
+          <li>Search crop</li><li>Contact farmer</li><li>Purchase directly</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-5 py-4">
+    <h2 class="display font-bold text-base mb-3">Fresh on Kisan Direct</h2>
+    <div class="flex flex-col gap-3">
+      ${state.products.filter(p=>p.status==='active').slice(0,3).map(p=>productCard(p)).join('')}
+    </div>
+  </div>
+  `;
+}
+function homeFeatureCard(icon,title,desc,onclick){
+  return `<button onclick="${onclick}" class="card p-3 text-left" style="min-height:128px;">
+    <div class="veg-icon mb-2">${icon}</div>
+    <div class="font-semibold text-sm">${title}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4;">${desc}</div>
+  </button>`;
+}
+function homeStart(role){
+  const user=currentUser();
+  if(user && user.role===role){ go('#/'+role+'/dashboard'); return; }
+  if(user && user.role!==role){ toast('You are logged in as '+user.role+'. Log out to switch roles.'); return; }
+  pendingRole=role; go('#/signup');
+}
+let pendingRole=null;
+
+/* ============================= AUTH ============================= */
+function renderLogin(){
+  return `${topbar('Log in',{back:true})}
+  <div class="px-5 py-6">
+    <p style="color:var(--muted);font-size:13.5px;" class="mb-5">Use your phone/email and password. Try a demo account below.</p>
+    <form onsubmit="return doLogin(event)" class="flex flex-col gap-3">
+      <div><label class="field-label">Phone or Email</label><input id="loginId" placeholder="9876500001 or you@example.com" required></div>
+      <div><label class="field-label">Password</label><input id="loginPw" type="password" placeholder="••••••••" required></div>
+      <button class="btn-primary mt-2" type="submit">Log in</button>
+    </form>
+    <button class="btn-secondary w-full mt-2" onclick="go('#/forgot')">Forgot password?</button>
+    <div class="mt-5 pt-4" style="border-top:1px solid var(--line);">
+      <p style="font-size:12.5px;color:var(--muted);" class="mb-2">Demo accounts (tap to fill):</p>
+      <div class="flex flex-col gap-2">
+        ${demoAccBtn('u_farmer1','Ramesh Naidu — Farmer')}
+        ${demoAccBtn('u_farmer2','Lakshmi Devi — Farmer')}
+        ${demoAccBtn('u_buyer1','Suresh Traders — Buyer')}
+        ${demoAccBtn('u_admin','Admin')}
+      </div>
+    </div>
+    <p class="mt-5 text-center" style="font-size:13px;color:var(--muted);">New here? <a href="#/signup" style="color:var(--leaf);font-weight:600;">Create an account</a></p>
+  </div>`;
+}
+function demoAccBtn(id,label){
+  const u=state.users.find(x=>x.id===id);
+  return `<button class="btn-ghost text-left" onclick="fillDemo('${u.phone}','${u.password}')">${u.photo} ${esc(label)} <span style="color:var(--muted);font-weight:400;">· ${u.phone}</span></button>`;
+}
+function fillDemo(phone,pw){
+  document.getElementById('loginId').value=phone;
+  document.getElementById('loginPw').value=pw;
+}
+function doLogin(e){
+  e.preventDefault();
+  const id=document.getElementById('loginId').value.trim().toLowerCase();
+  const pw=document.getElementById('loginPw').value;
+  const user=state.users.find(u=> (u.phone===id || u.email.toLowerCase()===id) && u.password===pw);
+  if(!user){ toast('Incorrect details. Try a demo account.'); return false; }
+  state.currentUserId=user.id; saveState();
+  toast('Welcome back, '+user.name.split(' ')[0]+'!');
+  go(user.role==='admin' ? '#/admin' : '#/'+user.role+'/dashboard');
+  return false;
+}
+function renderSignup(){
+  const role = pendingRole || 'farmer';
+  return `${topbar('Create account',{back:true})}
+  <div class="px-5 py-6">
+    <div class="flex gap-2 mb-5">
+      <button class="tab-btn flex-1 ${role==='farmer'?'active':''}" onclick="pendingRole='farmer';route()">🧑‍🌾 I'm a Farmer</button>
+      <button class="tab-btn flex-1 ${role==='buyer'?'active':''}" onclick="pendingRole='buyer';route()">🧑‍💼 I'm a Buyer</button>
+    </div>
+    <form onsubmit="return doSignup(event)" class="flex flex-col gap-3">
+      <input type="hidden" id="suRole" value="${role}">
+      <div><label class="field-label">Full name</label><input id="suName" required placeholder="Your name"></div>
+      <div><label class="field-label">Phone number</label><input id="suPhone" required placeholder="10-digit number" pattern="[0-9]{10}"></div>
+      <div><label class="field-label">Email (optional)</label><input id="suEmail" type="email" placeholder="you@example.com"></div>
+      <div><label class="field-label">Password</label><input id="suPw" type="password" required minlength="4" placeholder="At least 4 characters"></div>
+      <div class="grid grid-cols-2 gap-2">
+        <div><label class="field-label">State</label><select id="suState" onchange="fillDistricts()">${Object.keys(STATES_DISTRICTS).map(s=>`<option>${s}</option>`).join('')}</select></div>
+        <div><label class="field-label">District</label><select id="suDistrict"></select></div>
+      </div>
+      <div><label class="field-label">Village/Town</label><input id="suVillage" placeholder="e.g., Kothapalli"></div>
+      <div><label class="field-label">Languages</label>
+        <div class="flex gap-2">
+          <label class="tab-btn" style="cursor:pointer;"><input type="checkbox" value="Telugu" class="suLang mr-1" checked>Telugu</label>
+          <label class="tab-btn" style="cursor:pointer;"><input type="checkbox" value="English" class="suLang mr-1" checked>English</label>
+          <label class="tab-btn" style="cursor:pointer;"><input type="checkbox" value="Hindi" class="suLang mr-1">Hindi</label>
+        </div>
+      </div>
+      <div id="suFarmTypeWrap"><label class="field-label">Type of farming</label>
+        <select id="suFarmType">${CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select>
+      </div>
+      <button class="btn-primary mt-2" type="submit">Create account</button>
+    </form>
+    <p class="mt-4 text-center" style="font-size:13px;color:var(--muted);">Already have an account? <a href="#/login" style="color:var(--leaf);font-weight:600;">Log in</a></p>
+  </div>`;
+}
+function fillDistricts(){
+  const st=document.getElementById('suState').value;
+  const dsel=document.getElementById('suDistrict');
+  dsel.innerHTML=(STATES_DISTRICTS[st]||[]).map(d=>`<option>${d}</option>`).join('');
+}
+setTimeout(()=>{ try{ if(document.getElementById('suState')) fillDistricts(); }catch(e){} },0);
+function doSignup(e){
+  e.preventDefault();
+  const role=document.getElementById('suRole').value;
+  const phone=document.getElementById('suPhone').value.trim();
+  if(state.users.some(u=>u.phone===phone)){ toast('An account with this phone already exists.'); return false; }
+  const langs=[...document.querySelectorAll('.suLang:checked')].map(c=>c.value);
+  const user={
+    id:uid('u'), role, name:document.getElementById('suName').value.trim(),
+    phone, email:document.getElementById('suEmail').value.trim()||(phone+'@kisandirect.demo'),
+    password:document.getElementById('suPw').value,
+    state:document.getElementById('suState').value, district:document.getElementById('suDistrict').value,
+    village:document.getElementById('suVillage').value.trim()||'Not specified',
+    languages:langs, farmType: role==='farmer' ? document.getElementById('suFarmType').value : undefined,
+    photo: role==='farmer' ? '👨‍🌾' : '🧑‍💼'
+  };
+  state.users.push(user); state.currentUserId=user.id; saveState();
+  toast('Account created! Welcome, '+user.name.split(' ')[0]+'.');
+  go('#/'+role+'/dashboard');
+  return false;
+}
+function renderForgot(){
+  return `${topbar('Reset password',{back:true})}
+  <div class="px-5 py-6">
+    <p style="color:var(--muted);font-size:13.5px;" class="mb-5">Demo flow: enter your registered phone number and set a new password.</p>
+    <form onsubmit="return doForgot(event)" class="flex flex-col gap-3">
+      <div><label class="field-label">Phone number</label><input id="fpPhone" required placeholder="Registered phone number"></div>
+      <div><label class="field-label">New password</label><input id="fpPw" type="password" required minlength="4"></div>
+      <button class="btn-primary mt-2" type="submit">Reset password</button>
+    </form>
+  </div>`;
+}
+function doForgot(e){
+  e.preventDefault();
+  const phone=document.getElementById('fpPhone').value.trim();
+  const user=state.users.find(u=>u.phone===phone);
+  if(!user){ toast('No account found with that phone number.'); return false; }
+  user.password=document.getElementById('fpPw').value; saveState();
+  toast('Password updated. Please log in.');
+  go('#/login');
+  return false;
+}
+function logout(){ state.currentUserId=null; saveState(); toast('Logged out'); go('#/home'); }
+
+/* ============================= PRODUCT CARD ============================= */
+function productCard(p, opts={}){
+  const farmer=farmerById(p.farmerId);
+  const statusChip = p.status==='sold' ? `<span class="chip chip-sold">Sold</span>` : `<span class="chip chip-active">Available</span>`;
+  return `<button class="card card-accent ${p.status==='sold'?'muted':''} p-3 text-left w-full flex gap-3" onclick="go('#/buyer/product/${p.id}')">
+    <div class="veg-icon" style="font-size:26px;">${p.icon||'🌿'}</div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between gap-2">
+        <div class="font-semibold text-sm truncate">${esc(p.name)}</div>
+        ${statusChip}
+      </div>
+      <div style="font-size:12.5px;color:var(--muted);" class="truncate">${esc(p.location)} · ${farmer?esc(farmer.name):''}</div>
+      <div class="flex items-center justify-between mt-1.5">
+        <span class="font-bold text-sm" style="color:var(--leaf-dark)">₹${p.price}/${p.unit}</span>
+        <span style="font-size:12px;color:var(--muted);">${p.quantity} ${p.unit} avail.</span>
+      </div>
+    </div>
+  </button>`;
+}
+
+/* ============================= FARMER ROUTES ============================= */
+function renderFarmerRoute(parts,params){
+  const page=parts[1]||'dashboard';
+  if(page==='dashboard') return renderFarmerDashboard();
+  if(page==='products') return renderFarmerProducts();
+  if(page==='add-product') return renderProductForm(null);
+  if(page==='edit-product') return renderProductForm(params.get('id'));
+  if(page==='enquiries') return renderFarmerEnquiries();
+  if(page==='profile') return renderFarmerProfile();
+  if(page==='notifications') return renderNotifications();
+  return renderFarmerDashboard();
+}
+function renderFarmerDashboard(){
+  const user=currentUser();
+  const myProducts=state.products.filter(p=>p.farmerId===user.id);
+  const active=myProducts.filter(p=>p.status==='active').length;
+  const myEnquiries=state.enquiries.filter(e=>e.farmerId===user.id);
+  const pending=myEnquiries.filter(e=>e.status==='pending').length;
+  return `${topbar('Kisan Direct')}
+  <div class="px-5 py-4">
+    <div class="card p-4 mb-4" style="background:var(--leaf-light);border-color:var(--leaf-light);">
+      <div class="flex items-center gap-3">
+        <div style="font-size:34px;">${user.photo}</div>
+        <div>
+          <div class="font-bold" style="color:var(--leaf-dark)">Namaste, ${esc(user.name.split(' ')[0])} 🙏</div>
+          <div style="font-size:12.5px;color:var(--muted);">${esc(user.village)}, ${esc(user.district)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2 mb-5">
+      <div class="stat-box text-center"><div class="font-extrabold text-xl" style="color:var(--leaf-dark)">${active}</div><div style="font-size:11px;color:var(--muted);">Active listings</div></div>
+      <div class="stat-box text-center"><div class="font-extrabold text-xl" style="color:var(--turmeric);">${pending}</div><div style="font-size:11px;color:var(--muted);">New enquiries</div></div>
+      <div class="stat-box text-center"><div class="font-extrabold text-xl" style="color:var(--clay);">${myProducts.filter(p=>p.status==='sold').length}</div><div style="font-size:11px;color:var(--muted);">Sold</div></div>
+    </div>
+    <div class="flex gap-2 mb-5">
+      <button class="btn-primary flex-1" onclick="go('#/farmer/add-product')">+ Add Product</button>
+      <button class="btn-clay flex-1" onclick="go('#/voice')">🎙️ Voice</button>
+    </div>
+    <h2 class="display font-bold text-base mb-2">Smart Suggestions</h2>
+    ${renderFarmerSuggestions(user)}
+    <h2 class="display font-bold text-base mt-5 mb-2">My recent products</h2>
+    <div class="flex flex-col gap-3">
+      ${myProducts.length? myProducts.slice(0,3).map(p=>farmerProductCard(p)).join('') : emptyState('🌱','No products yet','Add your first crop to start selling.')}
+    </div>
+  </div>`;
+}
+function renderFarmerSuggestions(user){
+  const others=state.products.filter(p=>p.farmerId!==user.id && p.status==='active');
+  const myCats=new Set(state.products.filter(p=>p.farmerId===user.id).map(p=>p.category));
+  const priceTip = others.filter(p=>myCats.has(p.category)).slice(0,2);
+  const buyerInterest = state.enquiries.filter(e=>e.farmerId===user.id && e.status==='pending').length;
+  const cards=[];
+  if(buyerInterest>0) cards.push(sugCard('💬', buyerInterest+' buyer'+(buyerInterest>1?'s are':' is')+' waiting on your enquiries', 'Reply soon to close the sale.', "go('#/farmer/enquiries')"));
+  priceTip.forEach(p=>{
+    cards.push(sugCard('📈', `${p.name} is selling at ₹${p.price}/${p.unit} nearby`, 'Compare with your listing price.', `go('#/buyer/product/${p.id}')`));
+  });
+  if(!cards.length) cards.push(sugCard('✨','List more crops to get suggestions','We match your listings with nearby buyer demand.', "go('#/farmer/add-product')"));
+  return `<div class="flex flex-col gap-2">${cards.slice(0,3).join('')}</div>`;
+}
+function sugCard(icon,title,sub,onclick){
+  return `<button class="card p-3 flex items-center gap-3 text-left w-full" onclick="${onclick}">
+    <span style="font-size:20px;">${icon}</span>
+    <div class="flex-1"><div class="font-semibold" style="font-size:13.5px;">${title}</div><div style="font-size:12px;color:var(--muted);">${sub}</div></div>
+  </button>`;
+}
+function emptyState(icon,title,desc){
+  return `<div class="card p-6 text-center"><div style="font-size:32px;">${icon}</div><div class="font-semibold mt-2">${title}</div><div style="font-size:13px;color:var(--muted);margin-top:2px;">${desc}</div></div>`;
+}
+function farmerProductCard(p){
+  const enq=state.enquiries.filter(e=>e.productId===p.id).length;
+  return `<div class="card card-accent ${p.status==='sold'?'muted':''} p-3">
+    <div class="flex gap-3">
+      <div class="veg-icon" style="font-size:26px;">${p.icon||'🌿'}</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-2">
+          <div class="font-semibold text-sm truncate">${esc(p.name)}</div>
+          ${p.status==='sold'?'<span class="chip chip-sold">Sold</span>':'<span class="chip chip-active">Active</span>'}
+        </div>
+        <div style="font-size:12.5px;color:var(--muted);">${p.quantity} ${p.unit} · ₹${p.price}/${p.unit}</div>
+        <div style="font-size:12px;color:var(--muted);">${enq} enquir${enq===1?'y':'ies'}</div>
+      </div>
+    </div>
+    <div class="flex gap-2 mt-3">
+      <button class="btn-ghost flex-1" onclick="go('#/farmer/edit-product?id=${p.id}')">Edit</button>
+      ${p.status==='active'?`<button class="btn-ghost flex-1" onclick="markSold('${p.id}')">Mark Sold</button>`:''}
+      <button class="btn-ghost flex-1" style="color:var(--clay);" onclick="deleteProduct('${p.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+function renderFarmerProducts(){
+  const user=currentUser();
+  const filter=window._farmerProductFilter||'all';
+  let list=state.products.filter(p=>p.farmerId===user.id);
+  if(filter==='active') list=list.filter(p=>p.status==='active');
+  if(filter==='sold') list=list.filter(p=>p.status==='sold');
+  return `${topbar('My Products',{back:true})}
+  <div class="px-5 py-4">
+    <button class="btn-primary w-full mb-4" onclick="go('#/farmer/add-product')">+ Add Product</button>
+    <div class="scroll-row mb-4">
+      ${['all','active','sold'].map(f=>`<button class="tab-btn ${filter===f?'active':''}" onclick="window._farmerProductFilter='${f}';route()">${f[0].toUpperCase()+f.slice(1)}</button>`).join('')}
+    </div>
+    <div class="flex flex-col gap-3">
+      ${list.length? list.map(p=>farmerProductCard(p)).join('') : emptyState('📦','No products here','Try a different filter or add a new product.')}
+    </div>
+  </div>`;
+}
+function markSold(id){ const p=productById(id); p.status='sold'; saveState(); toast(p.name+' marked as sold'); route(); }
+function deleteProduct(id){
+  if(!confirm('Delete this product listing?')) return;
+  state.products=state.products.filter(p=>p.id!==id); saveState(); toast('Product deleted'); route();
+}
+function renderProductForm(editId){
+  const editing=editId?productById(editId):null;
+  const user=currentUser();
+  return `${topbar(editing?'Edit Product':'Add Product',{back:true})}
+  <div class="px-5 py-5">
+    <form onsubmit="return saveProduct(event,'${editId||''}')" class="flex flex-col gap-3">
+      <div><label class="field-label">Product / crop name</label><input id="pfName" required value="${editing?esc(editing.name):''}" placeholder="e.g., Tomato"></div>
+      <div><label class="field-label">Category</label><select id="pfCategory">${CATEGORIES.map(c=>`<option ${editing&&editing.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="grid grid-cols-2 gap-2">
+        <div><label class="field-label">Quantity available</label><input id="pfQty" type="number" min="0" step="0.1" required value="${editing?editing.quantity:''}"></div>
+        <div><label class="field-label">Unit</label><select id="pfUnit">${['kg','quintal','ton'].map(u=>`<option ${editing&&editing.unit===u?'selected':''}>${u}</option>`).join('')}</select></div>
+      </div>
+      <div><label class="field-label">Expected price (₹ per unit)</label><input id="pfPrice" type="number" min="0" required value="${editing?editing.price:''}"></div>
+      <div><label class="field-label">Harvest date</label><input id="pfHarvest" type="date" required value="${editing?editing.harvestDate.slice(0,10):new Date().toISOString().slice(0,10)}"></div>
+      <div><label class="field-label">Location</label><input id="pfLocation" required value="${editing?esc(editing.location):esc(user.village+', '+user.district)}"></div>
+      <div><label class="field-label">Product image</label>
+        <div class="flex gap-2 flex-wrap" id="pfIconPicker">
+          ${['🍅','🌾','🟡','🌶️','☁️','🌽','🥔','🧅','🍆','🥕','🍋','🫘'].map(ic=>`<button type="button" onclick="selectIcon('${ic}')" class="btn-ghost" style="font-size:18px;padding:8px 10px;" data-icon="${ic}">${ic}</button>`).join('')}
+        </div>
+        <input type="hidden" id="pfIcon" value="${editing?editing.icon:'🌿'}">
+        <p style="font-size:11.5px;color:var(--muted);margin-top:4px;">Prototype uses simple icons in place of photo upload.</p>
+      </div>
+      <div><label class="field-label">Description</label><textarea id="pfDesc" rows="3" placeholder="Quality, variety, any details for buyers">${editing?esc(editing.description):''}</textarea></div>
+      <button class="btn-primary mt-2" type="submit">${editing?'Save changes':'Add Product'}</button>
+    </form>
+  </div>`;
+}
+function selectIcon(ic){ document.getElementById('pfIcon').value=ic; }
+function saveProduct(e,editId){
+  e.preventDefault();
+  const user=currentUser();
+  const data={
+    name:document.getElementById('pfName').value.trim(),
+    category:document.getElementById('pfCategory').value,
+    quantity:parseFloat(document.getElementById('pfQty').value),
+    unit:document.getElementById('pfUnit').value,
+    price:parseFloat(document.getElementById('pfPrice').value),
+    harvestDate:document.getElementById('pfHarvest').value,
+    location:document.getElementById('pfLocation').value.trim(),
+    icon:document.getElementById('pfIcon').value,
+    description:document.getElementById('pfDesc').value.trim()
+  };
+  if(editId){
+    const p=productById(editId); Object.assign(p,data);
+    toast('Product updated');
+  } else {
+    state.products.unshift({id:uid('p'),farmerId:user.id,status:'active',createdAt:new Date().toISOString(),...data});
+    toast('Product added! Buyers can now find it.');
+  }
+  saveState(); go('#/farmer/products');
+  return false;
+}
+function renderFarmerEnquiries(){
+  const user=currentUser();
+  const list=state.enquiries.filter(e=>e.farmerId===user.id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  return `${topbar('Enquiries',{back:true})}
+  <div class="px-5 py-4 flex flex-col gap-3">
+    ${list.length? list.map(e=>farmerEnquiryCard(e)).join('') : emptyState('💬','No enquiries yet','When buyers are interested, you will see it here.')}
+  </div>`;
+}
+function farmerEnquiryCard(e){
+  const p=productById(e.productId); const buyer=farmerById(e.buyerId);
+  if(!p||!buyer) return '';
+  return `<div class="card p-3">
+    <div class="flex items-center justify-between mb-1">
+      <div class="font-semibold text-sm">${esc(buyer.name)}</div>
+      <span class="chip chip-${e.status}">${e.status[0].toUpperCase()+e.status.slice(1)}</span>
+    </div>
+    <div style="font-size:12.5px;color:var(--muted);" class="mb-2">about ${p.icon} ${esc(p.name)} · ${fmtWhen(e.createdAt)}</div>
+    <div class="p-2 rounded-lg mb-2" style="background:var(--wheat-deep);font-size:13.5px;">${esc(e.message)}</div>
+    ${e.status==='pending'?`<div class="flex gap-2">
+      <button class="btn-primary flex-1" style="padding:9px;" onclick="respondEnquiry('${e.id}','accepted')">Accept</button>
+      <button class="btn-ghost flex-1" onclick="respondEnquiry('${e.id}','rejected')">Reject</button>
+    </div>`:''}
+    ${e.status==='accepted'?`<button class="btn-secondary w-full" style="padding:9px;" onclick="respondEnquiry('${e.id}','completed')">Mark Completed</button>`:''}
+  </div>`;
+}
+function respondEnquiry(id,status){
+  const e=state.enquiries.find(x=>x.id===id); e.status=status; saveState();
+  const buyer=farmerById(e.buyerId); const p=productById(e.productId);
+  if(buyer && p) addNotification(buyer.id, `Your enquiry for ${p.name} was ${status}.`);
+  saveState();
+  toast('Enquiry '+status); route();
+}
+function renderFarmerProfile(){
+  const user=currentUser();
+  return `${topbar('Profile',{back:true})}
+  <div class="px-5 py-5">
+    <div class="card p-4 flex items-center gap-3 mb-5">
+      <div style="font-size:40px;">${user.photo}</div>
+      <div><div class="font-bold">${esc(user.name)}</div><div style="font-size:12.5px;color:var(--muted);">${esc(user.phone)}</div></div>
+    </div>
+    <form onsubmit="return saveProfile(event)" class="flex flex-col gap-3">
+      <div><label class="field-label">Farmer name</label><input id="prName" value="${esc(user.name)}" required></div>
+      <div><label class="field-label">Village/Location</label><input id="prVillage" value="${esc(user.village)}"></div>
+      <div><label class="field-label">Phone number</label><input id="prPhone" value="${esc(user.phone)}" required></div>
+      <div><label class="field-label">Type of farming</label><select id="prFarmType">${CATEGORIES.map(c=>`<option ${user.farmType===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      <button class="btn-primary mt-2" type="submit">Save changes</button>
+    </form>
+    <button class="btn-ghost w-full mt-4" style="color:var(--clay);" onclick="logout()">Log out</button>
+  </div>`;
+}
+function saveProfile(e){
+  e.preventDefault();
+  const user=currentUser();
+  user.name=document.getElementById('prName').value.trim();
+  user.village=document.getElementById('prVillage').value.trim();
+  user.phone=document.getElementById('prPhone').value.trim();
+  if(document.getElementById('prFarmType')) user.farmType=document.getElementById('prFarmType').value;
+  saveState(); toast('Profile updated'); route();
+  return false;
+}
+function renderNotifications(){
+  const user=currentUser();
+  const list=state.notifications.filter(n=>n.userId===user.id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  list.forEach(n=>n.read=true); saveState();
+  return `${topbar('Notifications',{back:true})}
+  <div class="px-5 py-4 flex flex-col gap-2">
+    ${list.length? list.map(n=>`<div class="card p-3"><div style="font-size:13.5px;">${esc(n.message)}</div><div style="font-size:11.5px;color:var(--muted);margin-top:3px;">${fmtWhen(n.createdAt)}</div></div>`).join('') : emptyState('🔔','No notifications','You are all caught up.')}
+  </div>`;
+}
+
+/* ============================= BUYER ROUTES ============================= */
+function renderBuyerRoute(parts,params){
+  const page=parts[1]||'dashboard';
+  if(page==='dashboard') return renderBuyerDashboard();
+  if(page==='search') return renderBuyerSearch();
+  if(page==='product') return renderProductDetail(parts[2]||params.get('id'));
+  if(page==='favorites') return renderBuyerFavorites();
+  if(page==='enquiries') return renderBuyerEnquiries();
+  if(page==='profile') return renderBuyerProfile();
+  if(page==='notifications') return renderNotifications();
+  return renderBuyerDashboard();
+}
+function renderBuyerDashboard(){
+  const user=currentUser();
+  const active=state.products.filter(p=>p.status==='active');
+  const nearby=active.filter(p=>p.location.includes(user.district)).slice(0,4);
+  return `${topbar('Kisan Direct')}
+  <div class="px-5 py-4">
+    <div class="card p-4 mb-4" style="background:var(--clay-light);border-color:var(--clay-light);">
+      <div class="flex items-center gap-3">
+        <div style="font-size:34px;">${user.photo}</div>
+        <div><div class="font-bold" style="color:var(--clay)">Welcome, ${esc(user.name)}</div><div style="font-size:12.5px;color:var(--muted);">${esc(user.village)}, ${esc(user.district)}</div></div>
+      </div>
+    </div>
+    <button class="btn-primary w-full mb-5" onclick="go('#/buyer/search')">🔍 Search Products</button>
+    <h2 class="display font-bold text-base mb-2">Smart Suggestions</h2>
+    ${renderBuyerSuggestions(user)}
+    <h2 class="display font-bold text-base mt-5 mb-2">${nearby.length?'Near '+user.district:'Available now'}</h2>
+    <div class="flex flex-col gap-3">${(nearby.length?nearby:active.slice(0,4)).map(p=>productCard(p)).join('')}</div>
+  </div>`;
+}
+function renderBuyerSuggestions(user){
+  const favCats=new Set(state.favorites.filter(f=>f.buyerId===user.id).map(f=>productById(f.productId)?.category).filter(Boolean));
+  const cards=[];
+  const matches=state.products.filter(p=>p.status==='active' && favCats.has(p.category));
+  matches.slice(0,2).forEach(p=> cards.push(sugCard(p.icon||'🌿', `${p.name} matches your saved interests`, `₹${p.price}/${p.unit} · ${p.location}`, `go('#/buyer/product/${p.id}')`)));
+  const recent=state.products.filter(p=>p.status==='active').sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0];
+  if(recent) cards.push(sugCard('🆕', `New listing: ${recent.name}`, `${recent.location} · ₹${recent.price}/${recent.unit}`, `go('#/buyer/product/${recent.id}')`));
+  if(!cards.length) cards.push(sugCard('✨','Save favorites to see suggestions','We will match new listings to your interests.', "go('#/buyer/search')"));
+  return `<div class="flex flex-col gap-2">${cards.slice(0,3).join('')}</div>`;
+}
+function renderBuyerSearch(){
+  const q=(window._buyerQ||'').toLowerCase();
+  const cat=window._buyerCat||'all';
+  const sortBy=window._buyerSort||'date';
+  const locFilter=(window._buyerLoc||'').toLowerCase();
+  let list=state.products.filter(p=>p.status==='active');
+  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q));
+  if(cat!=='all') list=list.filter(p=>p.category===cat);
+  if(locFilter) list=list.filter(p=>p.location.toLowerCase().includes(locFilter));
+  if(sortBy==='price-asc') list=list.sort((a,b)=>a.price-b.price);
+  else if(sortBy==='price-desc') list=list.sort((a,b)=>b.price-a.price);
+  else if(sortBy==='date') list=list.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  return `${topbar('Search Products',{back:true})}
+  <div class="px-5 py-4">
+    <input id="searchBox" placeholder="Search crop, e.g. Tomato" value="${esc(window._buyerQ||'')}" oninput="window._buyerQ=this.value;renderSearchListOnly()" class="mb-3">
+    <div class="scroll-row mb-2">
+      <button class="tab-btn ${cat==='all'?'active':''}" onclick="window._buyerCat='all';route()">All</button>
+      ${CATEGORIES.map(c=>`<button class="tab-btn ${cat===c?'active':''}" onclick="window._buyerCat='${c}';route()">${c}</button>`).join('')}
+    </div>
+    <div class="flex gap-2 mb-4">
+      <input placeholder="Filter by location" value="${esc(window._buyerLoc||'')}" oninput="window._buyerLoc=this.value;renderSearchListOnly()" style="flex:1.4;">
+      <select onchange="window._buyerSort=this.value;route()" style="flex:1;">
+        <option value="date" ${sortBy==='date'?'selected':''}>Newest</option>
+        <option value="price-asc" ${sortBy==='price-asc'?'selected':''}>Price ↑</option>
+        <option value="price-desc" ${sortBy==='price-desc'?'selected':''}>Price ↓</option>
+      </select>
+    </div>
+    <div id="searchResults" class="flex flex-col gap-3">
+      ${list.length? list.map(p=>productCard(p)).join('') : emptyState('🔎','No matches','Try a different crop, category or location.')}
+    </div>
+  </div>`;
+}
+function renderSearchListOnly(){
+  const el=document.getElementById('searchResults'); if(!el) return;
+  const q=(window._buyerQ||'').toLowerCase();
+  const cat=window._buyerCat||'all';
+  const locFilter=(window._buyerLoc||'').toLowerCase();
+  let list=state.products.filter(p=>p.status==='active');
+  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q));
+  if(cat!=='all') list=list.filter(p=>p.category===cat);
+  if(locFilter) list=list.filter(p=>p.location.toLowerCase().includes(locFilter));
+  el.innerHTML = list.length? list.map(p=>productCard(p)).join('') : emptyState('🔎','No matches','Try a different crop, category or location.');
+}
+function renderProductDetail(id){
+  const p=productById(id);
+  if(!p) return `${topbar('Not found',{back:true})}<div class="px-5 py-8">${emptyState('❓','Product not found','It may have been removed.')}</div>`;
+  const farmer=farmerById(p.farmerId);
+  const user=currentUser();
+  const isFav = user && user.role==='buyer' && state.favorites.some(f=>f.buyerId===user.id && f.productId===p.id);
+  return `${topbar(p.name,{back:true})}
+  <div class="px-5 py-4">
+    <div class="card p-5 text-center mb-4" style="background:var(--leaf-light);">
+      <div style="font-size:56px;">${p.icon||'🌿'}</div>
+    </div>
+    <div class="flex items-center justify-between mb-1">
+      <h2 class="display font-bold text-xl">${esc(p.name)}</h2>
+      ${p.status==='sold'?'<span class="chip chip-sold">Sold</span>':'<span class="chip chip-active">Available</span>'}
+    </div>
+    <div style="color:var(--muted);font-size:13.5px;" class="mb-4">${esc(p.category)} · ${esc(p.location)}</div>
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div class="stat-box"><div style="font-size:11px;color:var(--muted);">Price</div><div class="font-bold" style="color:var(--leaf-dark)">₹${p.price} / ${p.unit}</div></div>
+      <div class="stat-box"><div style="font-size:11px;color:var(--muted);">Quantity</div><div class="font-bold">${p.quantity} ${p.unit}</div></div>
+      <div class="stat-box"><div style="font-size:11px;color:var(--muted);">Harvest date</div><div class="font-bold">${fmtDate(p.harvestDate)}</div></div>
+      <div class="stat-box"><div style="font-size:11px;color:var(--muted);">Farmer</div><div class="font-bold truncate">${farmer?esc(farmer.name):'—'}</div></div>
+    </div>
+    <div class="card p-3 mb-4"><div style="font-size:13.5px;line-height:1.6;">${esc(p.description)||'No description provided.'}</div></div>
+    ${user && user.role==='buyer' && p.status==='active' ? `
+    <div class="flex flex-col gap-2">
+      <button class="btn-primary" onclick="openEnquiryForm('${p.id}')">Send Enquiry</button>
+      <div class="flex gap-2">
+        <button class="btn-secondary flex-1" onclick="contactFarmer('${p.id}')">Contact Farmer</button>
+        <button class="btn-ghost flex-1" onclick="toggleFavorite('${p.id}')">${isFav?'💔 Remove':'❤️ Save'}</button>
+      </div>
+      <button class="btn-ghost" onclick="requestProduct('${p.id}')">Request a different quantity/product</button>
+    </div>
+    <div id="enquiryFormSlot"></div>` : ''}
+    ${!user? `<button class="btn-primary w-full" onclick="go('#/login')">Log in to contact this farmer</button>`:''}
+  </div>`;
+}
+function openEnquiryForm(pid){
+  const slot=document.getElementById('enquiryFormSlot');
+  slot.innerHTML=`<div class="card p-3 mt-3">
+    <label class="field-label">Message to farmer</label>
+    <textarea id="enqMsg" rows="2">I'm interested in buying ${productById(pid).quantity>0?'':''}this product.</textarea>
+    <button class="btn-primary w-full mt-2" onclick="sendEnquiry('${pid}')">Send</button>
+  </div>`;
+}
+function sendEnquiry(pid){
+  const user=currentUser(); const p=productById(pid);
+  const msg=document.getElementById('enqMsg').value.trim() || "I'm interested in this product.";
+  state.enquiries.unshift({id:uid('e'),buyerId:user.id,farmerId:p.farmerId,productId:pid,message:msg,status:'pending',createdAt:new Date().toISOString()});
+  addNotification(p.farmerId, `${user.name} sent an enquiry for your ${p.name} listing.`);
+  saveState(); toast('Enquiry sent to farmer'); go('#/buyer/enquiries');
+}
+function contactFarmer(pid){
+  const p=productById(pid); const farmer=farmerById(p.farmerId);
+  toast('Demo contact: call/WhatsApp '+farmer.phone);
+}
+function requestProduct(pid){
+  const p=productById(pid);
+  openEnquiryForm(pid);
+  setTimeout(()=>{ const box=document.getElementById('enqMsg'); if(box) box.value='I would like to request a custom quantity of '+p.name+'. Please let me know availability.'; },0);
+}
+function toggleFavorite(pid){
+  const user=currentUser();
+  const existing=state.favorites.find(f=>f.buyerId===user.id && f.productId===pid);
+  if(existing){ state.favorites=state.favorites.filter(f=>f!==existing); toast('Removed from favorites'); }
+  else{ state.favorites.push({id:uid('f'),buyerId:user.id,productId:pid}); toast('Saved to favorites'); }
+  saveState(); route();
+}
+function renderBuyerFavorites(){
+  const user=currentUser();
+  const favs=state.favorites.filter(f=>f.buyerId===user.id).map(f=>productById(f.productId)).filter(Boolean);
+  return `${topbar('Favorites',{back:true})}
+  <div class="px-5 py-4 flex flex-col gap-3">${favs.length? favs.map(p=>productCard(p)).join('') : emptyState('❤️','No favorites yet','Save products to find them quickly later.')}</div>`;
+}
+function renderBuyerEnquiries(){
+  const user=currentUser();
+  const list=state.enquiries.filter(e=>e.buyerId===user.id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  return `${topbar('My Enquiries',{back:true})}
+  <div class="px-5 py-4 flex flex-col gap-3">
+  ${list.length? list.map(e=>{
+    const p=productById(e.productId); const farmer=farmerById(e.farmerId);
+    if(!p) return '';
+    return `<div class="card p-3">
+      <div class="flex items-center justify-between mb-1">
+        <div class="font-semibold text-sm">${p.icon} ${esc(p.name)}</div>
+        <span class="chip chip-${e.status}">${e.status[0].toUpperCase()+e.status.slice(1)}</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted);" class="mb-2">${farmer?esc(farmer.name):''} · ${fmtWhen(e.createdAt)}</div>
+      <div class="p-2 rounded-lg" style="background:var(--wheat-deep);font-size:13.5px;">${esc(e.message)}</div>
+    </div>`;
+  }).join('') : emptyState('💬','No enquiries yet','Enquiries you send to farmers will appear here.')}
+  </div>`;
+}
+function renderBuyerProfile(){
+  const user=currentUser();
+  return `${topbar('Profile',{back:true})}
+  <div class="px-5 py-5">
+    <div class="card p-4 flex items-center gap-3 mb-5">
+      <div style="font-size:40px;">${user.photo}</div>
+      <div><div class="font-bold">${esc(user.name)}</div><div style="font-size:12.5px;color:var(--muted);">${esc(user.phone)}</div></div>
+    </div>
+    <form onsubmit="return saveProfile(event)" class="flex flex-col gap-3">
+      <div><label class="field-label">Name</label><input id="prName" value="${esc(user.name)}" required></div>
+      <div><label class="field-label">Location</label><input id="prVillage" value="${esc(user.village)}"></div>
+      <div><label class="field-label">Phone number</label><input id="prPhone" value="${esc(user.phone)}" required></div>
+      <button class="btn-primary mt-2" type="submit">Save changes</button>
+    </form>
+    <button class="btn-ghost w-full mt-4" style="color:var(--clay);" onclick="logout()">Log out</button>
+  </div>`;
+}
+
+/* ============================= MARKET ============================= */
+function renderMarket(){
+  return `${topbar('Market Prices',{back:true})}
+  <div class="px-5 py-4">
+    <div class="flex items-center gap-2 mb-4"><span class="chip chip-demo">Demo Market Data</span><span style="font-size:12px;color:var(--muted);">Not live — sample prices for this prototype</span></div>
+    <div class="flex flex-col gap-3">
+      ${DEMO_MARKET_PRICES.map(m=>`<div class="card p-3">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold text-sm">${esc(m.crop)}</div>
+          <span style="font-size:11px;color:var(--muted);">${esc(m.date)}</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--muted);">${esc(m.market)}</div>
+        <div class="font-bold mt-1" style="color:var(--leaf-dark)">${esc(m.price)}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card p-3 mt-4" style="background:var(--wheat-deep);">
+      <div style="font-size:12.5px;color:var(--muted);line-height:1.6;">In a full deployment, this section can be connected to public agricultural data sources such as e-NAM or Agmarknet for real-time prices.</div>
+    </div>
+  </div>`;
+}
+
+/* ============================= ADMIN ============================= */
+function renderAdmin(){
+  const farmers=state.users.filter(u=>u.role==='farmer');
+  const buyers=state.users.filter(u=>u.role==='buyer');
+  const active=state.products.filter(p=>p.status==='active').length;
+  const completed=state.enquiries.filter(e=>e.status==='completed').length;
+  return `${topbar('Admin Dashboard')}
+  <div class="px-5 py-4">
+    <div class="grid grid-cols-2 gap-3 mb-5">
+      <div class="stat-box"><div class="font-extrabold text-xl" style="color:var(--leaf-dark)">${farmers.length}</div><div style="font-size:11.5px;color:var(--muted);">Total farmers</div></div>
+      <div class="stat-box"><div class="font-extrabold text-xl" style="color:var(--clay)">${buyers.length}</div><div style="font-size:11.5px;color:var(--muted);">Total buyers</div></div>
+      <div class="stat-box"><div class="font-extrabold text-xl" style="color:var(--turmeric)">${state.products.length}</div><div style="font-size:11.5px;color:var(--muted);">Total products</div></div>
+      <div class="stat-box"><div class="font-extrabold text-xl">${active}</div><div style="font-size:11.5px;color:var(--muted);">Active listings</div></div>
+      <div class="stat-box"><div class="font-extrabold text-xl">${completed}</div><div style="font-size:11.5px;color:var(--muted);">Completed connections</div></div>
+      <div class="stat-box"><div class="font-extrabold text-xl">${state.enquiries.length}</div><div style="font-size:11.5px;color:var(--muted);">Total enquiries</div></div>
+    </div>
+
+    <h2 class="display font-bold text-base mb-2">Farmers</h2>
+    <div class="flex flex-col gap-2 mb-5">
+      ${farmers.map(f=>`<div class="card p-3 flex items-center justify-between"><div><div class="font-semibold text-sm">${f.photo} ${esc(f.name)}</div><div style="font-size:12px;color:var(--muted);">${esc(f.village)}, ${esc(f.district)}</div></div><span style="font-size:12px;color:var(--muted);">${state.products.filter(p=>p.farmerId===f.id).length} listings</span></div>`).join('')}
+    </div>
+
+    <h2 class="display font-bold text-base mb-2">Buyers</h2>
+    <div class="flex flex-col gap-2 mb-5">
+      ${buyers.map(b=>`<div class="card p-3 flex items-center justify-between"><div><div class="font-semibold text-sm">${b.photo} ${esc(b.name)}</div><div style="font-size:12px;color:var(--muted);">${esc(b.village)}</div></div><span style="font-size:12px;color:var(--muted);">${state.enquiries.filter(e=>e.buyerId===b.id).length} enquiries</span></div>`).join('')}
+    </div>
+
+    <h2 class="display font-bold text-base mb-2">All Products</h2>
+    <div class="flex flex-col gap-2">
+      ${state.products.map(p=>`<div class="card p-3 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0"><span>${p.icon}</span><div class="min-w-0"><div class="font-semibold text-sm truncate">${esc(p.name)}</div><div style="font-size:11.5px;color:var(--muted);">${esc(farmerById(p.farmerId)?.name||'')}</div></div></div>
+        <div class="flex items-center gap-2">
+          ${p.status==='sold'?'<span class="chip chip-sold">Sold</span>':'<span class="chip chip-active">Active</span>'}
+          <button class="btn-ghost" style="padding:6px 9px;color:var(--clay);" onclick="adminRemove('${p.id}')">Remove</button>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+function adminRemove(pid){
+  if(!confirm('Remove this listing as inappropriate/duplicate?')) return;
+  state.products=state.products.filter(p=>p.id!==pid); saveState(); toast('Listing removed'); route();
+}
+
+/* ============================= VOICE ASSISTANT ============================= */
+let recognizing=false;
+let recognition=null;
+function renderVoice(){
+  const user=currentUser();
+  const hasSTT = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+  const hasTTS = 'speechSynthesis' in window;
+  return `${topbar('Voice Assistant',{back:true})}
+  <div class="px-5 py-5 text-center">
+    <div class="card p-6 mb-4" style="background:var(--turmeric-light);">
+      <div style="font-size:44px;">🎙️</div>
+      <div class="display font-bold mt-2 telugu" style="font-size:17px;">కిసాన్ డైరెక్ట్‌తో మాట్లాడండి</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:2px;">Talk to Kisan Direct in Telugu</div>
+    </div>
+    ${(!hasSTT)? `<div class="card p-3 mb-4" style="font-size:12.5px;color:var(--clay);">Speech recognition isn't supported in this browser. Try Chrome on Android/desktop. You can still type below.</div>`:''}
+    <button id="micBtn" class="fab-mic" style="position:static;transform:none;width:78px;height:78px;font-size:30px;margin:0 auto 14px;" onclick="toggleListen()">🎤</button>
+    <div id="voiceStatus" style="font-size:13px;color:var(--muted);min-height:18px;">${hasSTT?'Tap the mic and speak':'Type your message below'}</div>
+
+    <div class="card p-3 mt-5 text-left" id="voiceTranscript" style="min-height:64px;">
+      <div style="font-size:12px;color:var(--muted);">Transcript</div>
+      <div id="transcriptText" style="font-size:14.5px;margin-top:4px;" class="telugu">—</div>
+    </div>
+    <div class="card p-3 mt-3 text-left" style="background:var(--leaf-light);min-height:64px;">
+      <div style="font-size:12px;color:var(--muted);">Assistant</div>
+      <div id="assistantReply" style="font-size:14.5px;margin-top:4px;" class="telugu">నమస్తే! నేను మీకు ఎలా సహాయం చేయగలను?</div>
+    </div>
+
+    <form onsubmit="return submitTypedVoice(event)" class="flex gap-2 mt-4">
+      <input id="typedVoice" placeholder="Type in Telugu or English…" style="flex:1;">
+      <button class="btn-primary" style="padding:12px 16px;" type="submit">Send</button>
+    </form>
+
+    <div class="mt-5 text-left">
+      <div class="font-semibold text-sm mb-2">Try saying:</div>
+      <div class="flex flex-col gap-2">
+        ${voiceExample('నా దగ్గర 500 కిలోల టమాటాలు ఉన్నాయి','I have 500 kg of tomatoes')}
+        ${voiceExample('మార్కెట్ ధరలు చూపించు','Show market prices')}
+        ${voiceExample('నా ఎంక్వైరీలు చూపించు','Show my enquiries')}
+        ${voiceExample('సహాయం','Help / how to use the app')}
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:16px;">Prototype note: speech-to-text and text-to-speech use your browser's built-in Telugu voice support. Understanding is rule-based for this demo, not a full LLM.</p>
+  </div>`;
+}
+function voiceExample(te,en){
+  return `<button class="card p-2.5 text-left" onclick="runVoiceCommand('${te.replace(/'/g,"\\'")}')">
+    <div class="telugu" style="font-size:13.5px;">${te}</div>
+    <div style="font-size:11.5px;color:var(--muted);">${en}</div>
+  </button>`;
+}
+function toggleListen(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast('Speech recognition not supported — please type instead'); return; }
+  if(recognizing){ recognition && recognition.stop(); return; }
+  recognition = new SR();
+  recognition.lang='te-IN';
+  recognition.interimResults=false;
+  recognition.maxAlternatives=1;
+  recognition.onstart=()=>{ recognizing=true; document.getElementById('micBtn').classList.add('listening'); document.getElementById('voiceStatus').textContent='Listening… speak now'; };
+  recognition.onerror=(ev)=>{ document.getElementById('voiceStatus').textContent='Could not hear that. Try again or type below.'; };
+  recognition.onend=()=>{ recognizing=false; const btn=document.getElementById('micBtn'); if(btn) btn.classList.remove('listening'); const st=document.getElementById('voiceStatus'); if(st) st.textContent='Tap the mic and speak'; };
+  recognition.onresult=(ev)=>{
+    const text=ev.results[0][0].transcript;
+    runVoiceCommand(text);
+  };
+  try{ recognition.start(); }catch(err){ toast('Could not start microphone'); }
+}
+function submitTypedVoice(e){
+  e.preventDefault();
+  const val=document.getElementById('typedVoice').value.trim();
+  if(!val) return false;
+  runVoiceCommand(val);
+  document.getElementById('typedVoice').value='';
+  return false;
+}
+function runVoiceCommand(text){
+  document.getElementById('transcriptText').textContent=text;
+  const reply=processVoiceCommand(text);
+  document.getElementById('assistantReply').textContent=reply.te;
+  speak(reply.te);
+  if(reply.action) setTimeout(reply.action, 900);
+}
+function speak(teText){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    const utter=new SpeechSynthesisUtterance(teText);
+    utter.lang='te-IN'; utter.rate=0.95;
+    const voices=speechSynthesis.getVoices();
+    const teVoice=voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('te'));
+    if(teVoice) utter.voice=teVoice;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);
+  }catch(e){}
+}
+/* Simple rule-based Telugu/English command understanding for the prototype */
+function processVoiceCommand(raw){
+  const t=raw.toLowerCase();
+  const user=currentUser();
+  const qtyMatch=raw.match(/(\d+)\s*(kg|కిలో|క్వింటాల్|quintal)/i);
+
+  const has=(...words)=>words.some(w=>t.includes(w));
+
+  if(has('మార్కెట్','market','ధర','price')){
+    return { te:'ఇదిగో ప్రస్తుత మార్కెట్ ధరలు (డెమో డేటా).', action:()=>go('#/market') };
+  }
+  if(has('ఎంక్వైరీ','enquiry','enquiries','విచారణ')){
+    if(user && user.role==='farmer') return { te:'మీ ఎంక్వైరీలు చూపిస్తున్నాను.', action:()=>go('#/farmer/enquiries') };
+    if(user && user.role==='buyer') return { te:'మీ ఎంక్వైరీలు చూపిస్తున్నాను.', action:()=>go('#/buyer/enquiries') };
+    return { te:'దయచేసి ముందు లాగిన్ అవ్వండి.', action:()=>go('#/login') };
+  }
+  if(has('కొనుగోలు','search','వెతకండి','వెతుకు','buyer','కొనాలి')){
+    return { te:'పంటల కోసం వెతుకుతున్నాను. శోధన పేజీ తెరుస్తున్నాను.', action:()=>go('#/buyer/search') };
+  }
+  if((has('నా దగ్గర','i have','add','జోడించ','అమ్మ') ) && user && user.role==='farmer'){
+    const cropWord = ['టమాటా','tomato','వరి','rice','పసుపు','turmeric','మిరప','chilli','మొక్కజొన్న','maize','పత్తి','cotton'].find(c=>t.includes(c.toLowerCase()));
+    const qty=qtyMatch?qtyMatch[1]:'';
+    return { te:`బాగుంది! ${qty?qty+' కిలోల ':''}${cropWord?cropWord+' ':''}పంటను జోడించడానికి ఫారం తెరుస్తున్నాను.`, action:()=>go('#/farmer/add-product') };
+  }
+  if(has('సహాయం','help','ఎలా వాడాలి','how to use')){
+    return { te:'నేను పంటలు జోడించడం, కొనుగోలుదారులను వెతకడం, మార్కెట్ ధరలు చూపడం మరియు ఎంక్వైరీలు చూడటంలో సహాయం చేయగలను.', action:null };
+  }
+  if(has('నమస్తే','hello','హాయ్','hi')){
+    return { te: `నమస్తే${user?', '+user.name.split(' ')[0]:''}! కిసాన్ డైరెక్ట్‌కు స్వాగతం.`, action:null };
+  }
+  return { te:'క్షమించండి, నాకు అర్థం కాలేదు. మార్కెట్ ధరలు, ఎంక్వైరీలు, లేదా పంట జోడించడం గురించి అడగండి.', action:null };
+}
+
+/* ============================= INIT ============================= */
+if(typeof speechSynthesis!=='undefined'){ speechSynthesis.onvoiceschanged=()=>{}; }
+</script>
+</body>
+</html>
